@@ -34,3 +34,10 @@ export const PhotoIcon: React.FC = () => (
         <path strokeLinecap="round" strokeLinejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
     </svg>
 );
+
+export const LightbulbIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-yellow-400 flex-shrink-0" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+      <path fillRule="evenodd" d="M4 5a2 2 0 012-2h8a2 2 0 012 2v2a2 2 0 01-2 2h-1a1 1 0 00-1 1v2a1 1 0 001 1h1a2 2 0 012 2v2.586a1 1 0 01-.293.707l-2.414 2.414a1 1 0 01-.707.293H7.414a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 014 17.586V15a2 2 0 012-2h1a1 1 0 001-1v-2a1 1 0 00-1-1H6a2 2 0 01-2-2V5z" clipRule="evenodd" />
+    </svg>
+);

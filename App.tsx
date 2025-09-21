@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { GenerationStatus } from './types';
 import { generateMemeImage } from './services/geminiService';
@@ -7,7 +6,7 @@ import { Footer } from './components/Footer';
 import { Spinner } from './components/Spinner';
 import { MemeCard } from './components/MemeCard';
 import { ErrorMessage } from './components/ErrorMessage';
-import { SparklesIcon, PhotoIcon } from './components/Icons';
+import { SparklesIcon } from './components/Icons';
 import { WelcomeScreen } from './components/WelcomeScreen';
 
 const App: React.FC = () => {
@@ -16,9 +15,18 @@ const App: React.FC = () => {
   const [status, setStatus] = useState<GenerationStatus>(GenerationStatus.IDLE);
   const [error, setError] = useState<string | null>(null);
 
-  const handleGenerate = useCallback(async () => {
-    if (!prompt.trim() || status === GenerationStatus.LOADING) {
+  const handleGenerate = useCallback(async (promptOverride?: string) => {
+    // Defensively get the prompt to use, ensuring it's a string.
+    // This prevents TypeErrors if an event object is passed by mistake.
+    const currentPrompt = typeof promptOverride === 'string' ? promptOverride : prompt;
+
+    if (!currentPrompt.trim() || status === GenerationStatus.LOADING) {
       return;
+    }
+    
+    // Only update the prompt state if a new, valid string was passed.
+    if (typeof promptOverride === 'string' && promptOverride !== prompt) {
+      setPrompt(currentPrompt);
     }
     
     setStatus(GenerationStatus.LOADING);
@@ -26,7 +34,7 @@ const App: React.FC = () => {
     setError(null);
 
     try {
-      const b64Image = await generateMemeImage(prompt);
+      const b64Image = await generateMemeImage(currentPrompt);
       setImageUrl(`data:image/jpeg;base64,${b64Image}`);
       setStatus(GenerationStatus.SUCCESS);
     } catch (err) {
@@ -54,7 +62,7 @@ const App: React.FC = () => {
               rows={3}
             />
             <button
-              onClick={handleGenerate}
+              onClick={() => handleGenerate()}
               disabled={status === GenerationStatus.LOADING || !prompt.trim()}
               className="absolute bottom-4 right-4 flex items-center justify-center gap-2 px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow-md hover:bg-indigo-700 disabled:bg-gray-600 disabled:cursor-not-allowed focus:outline-none focus:ring-4 focus:ring-indigo-500/50 transition-all duration-300 transform hover:scale-105 disabled:scale-100"
             >
@@ -77,7 +85,7 @@ const App: React.FC = () => {
           {status === GenerationStatus.LOADING && <Spinner size="lg" />}
           {status === GenerationStatus.ERROR && error && <ErrorMessage message={error} />}
           {status === GenerationStatus.SUCCESS && imageUrl && <MemeCard imageUrl={imageUrl} prompt={prompt} />}
-          {status === GenerationStatus.IDLE && <WelcomeScreen />}
+          {status === GenerationStatus.IDLE && <WelcomeScreen onExampleClick={handleGenerate} />}
         </div>
       </main>
       <Footer />
